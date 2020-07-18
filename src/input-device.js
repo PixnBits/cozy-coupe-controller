@@ -113,4 +113,6 @@ inputDevice.open('/dev/input/event0', (err, fd) => {
   inputDevice.emit('ready', device);
 });
 
+process.once('exit', () => inputDevice.close());
+
 module.exports = inputDevice;
