@@ -50,7 +50,7 @@ inputDevice.on('EV_ABS', ({ code, value }) => {
     return;
   }
 
-  const steeringAngle = mapValueToRange(rawValues.rightX, 0, 90);
+  const steeringAngle = mapValueToRange(rawValues.rightX, -45, 45);
   const throttleForwardMagnitude = mapValueToRange(rawValues.rightZ, 0, 100);
   const throttleBackwardsMagnitude = mapValueToRange(rawValues.leftZ, 0, 100);
 
@@ -69,7 +69,7 @@ inputDevice.on('EV_ABS', ({ code, value }) => {
 
   dashboard({
     steering: {
-      direction: steeringAngle > 46 ? 'R' : steeringAngle < 44 ? 'L' : 'C',
+      direction: steeringAngle > 2 ? 'R' : steeringAngle < -2 ? 'L' : 'C',
       angle: steeringAngle,
     },
     throttle: {
