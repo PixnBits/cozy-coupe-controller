@@ -1,0 +1,19 @@
+{
+  "name": "@pixnbits/cozy-skateboard",
+  "version": "0.1.0-pre",
+  "description": "Silly RC skateboard for a Cozy Coupe.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "pixnbits",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^26.1.0"
+  },
+  "dependencies": {
+    "evdev": "~0.2.5",
+    "johnny-five": "^2.0.0",
+    "raspi-io": "^11.0.0"
+  }
+}
