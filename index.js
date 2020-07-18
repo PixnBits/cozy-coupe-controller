@@ -25,31 +25,7 @@ function mapValueToRange(rawValue, outputMin, outputMax) {
   return ((inputValue - inputMin) / (inputMax - inputMin) * (outputMax - outputMin)) + outputMin;
 }
 
-inputDevice.once('ready', (device) => {
-  console.log(`reading from ${device.name}`);
-  if (device.supportedEvents.EV_ABS.ABS_RX) {
-    Object.assign(rawValues.rightX, device.supportedEvents.EV_ABS.ABS_RX);
-  }
-  if (device.supportedEvents.EV_ABS.ABS_RZ) {
-    Object.assign(rawValues.rightZ, device.supportedEvents.EV_ABS.ABS_RZ);
-  }
-  if (device.supportedEvents.EV_ABS.ABS_Z) {
-    Object.assign(rawValues.leftZ, device.supportedEvents.EV_ABS.ABS_Z);
-  }
-  console.log('rawValues', rawValues);
-});
-
-inputDevice.on('EV_ABS', ({ code, value }) => {
-  if (code === 'ABS_RX') {
-    rawValues.rightX.value = value;
-  } else if (code === 'ABS_Z') {
-    rawValues.leftZ.value = value;
-  } else if (code === 'ABS_RZ') {
-    rawValues.rightZ.value = value;
-  } else {
-    return;
-  }
-
+function calculateInputState() {
   const steeringAngle = mapValueToRange(rawValues.rightX, -45, 45);
   const throttleForwardMagnitude = mapValueToRange(rawValues.rightZ, 0, 100);
   const throttleBackwardsMagnitude = mapValueToRange(rawValues.leftZ, 0, 100);
@@ -67,7 +43,7 @@ inputDevice.on('EV_ABS', ({ code, value }) => {
     throttleMagnitude = throttleBackwardsMagnitude;
   }
 
-  dashboard({
+  return {
     steering: {
       direction: steeringAngle > 2 ? 'R' : steeringAngle < -2 ? 'L' : 'C',
       angle: steeringAngle,
@@ -76,5 +52,34 @@ inputDevice.on('EV_ABS', ({ code, value }) => {
       direction: throttleDirection,
       magnitude: throttleMagnitude,
     },
-  });
+  };
+}
+
+inputDevice.once('ready', (device) => {
+  console.log(`reading from ${device.name}`);
+  // console.log('rawValues', rawValues);
+  if (device.supportedEvents.EV_ABS.ABS_RX) {
+    Object.assign(rawValues.rightX, device.supportedEvents.EV_ABS.ABS_RX);
+  }
+  if (device.supportedEvents.EV_ABS.ABS_RZ) {
+    Object.assign(rawValues.rightZ, device.supportedEvents.EV_ABS.ABS_RZ);
+  }
+  if (device.supportedEvents.EV_ABS.ABS_Z) {
+    Object.assign(rawValues.leftZ, device.supportedEvents.EV_ABS.ABS_Z);
+  }
+  dasboard(calculateInputState());
+});
+
+inputDevice.on('EV_ABS', ({ code, value }) => {
+  if (code === 'ABS_RX') {
+    rawValues.rightX.value = value;
+  } else if (code === 'ABS_Z') {
+    rawValues.leftZ.value = value;
+  } else if (code === 'ABS_RZ') {
+    rawValues.rightZ.value = value;
+  } else {
+    return;
+  }
+
+  dasboard(calculateInputState());
 });
