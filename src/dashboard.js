@@ -42,8 +42,10 @@ const throttleDisplay = blessed.box({
     fg: 'black'
   }
 });
+
 screen.render();
-setInterval(() => screen.render(), 1e3);
+
+setInterval(() => screen.render(), 3e3);
 
 function render({ steering, throttle }) {
   steeringDisplay.setContent(`Steering: ${steering.direction} ${Math.round(steering.angle)}° => {servo raw value}`);
