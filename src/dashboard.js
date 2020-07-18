@@ -45,8 +45,6 @@ const throttleDisplay = blessed.box({
 
 screen.render();
 
-setInterval(() => screen.render(), 3e3);
-
 function render({ steering, throttle }) {
   steeringDisplay.setContent(`Steering: ${steering.direction} ${Math.round(steering.angle)}° => {servo raw value}`);
   throttleDisplay.setContent(`Throttle: ${throttle.direction} ${Math.round(throttle.magnitude)} => {PWM value}`);
