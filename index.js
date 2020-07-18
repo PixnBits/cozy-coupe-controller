@@ -39,7 +39,7 @@ inputDevice.once('ready', (device) => {
   console.log('rawValues', rawValues);
 });
 
-inputDevice.on('EV_KEY', ({ code, value }) => {
+inputDevice.on('EV_ABS', ({ code, value }) => {
   if (code === 'ABS_RX') {
     rawValues.rightX.value = value;
   } else if (code === 'ABS_Z') {
@@ -62,7 +62,7 @@ inputDevice.on('EV_KEY', ({ code, value }) => {
   } else if (throttleForwardMagnitude > 1) {
     throttleDirection = 'F';
     throttleMagnitude = throttleForwardMagnitude;
-  } else {
+  } else if (throttleBackwardsMagnitude > 1) {
     throttleDirection = 'R';
     throttleMagnitude = throttleBackwardsMagnitude;
   }
@@ -70,11 +70,11 @@ inputDevice.on('EV_KEY', ({ code, value }) => {
   dashboard({
     steering: {
       direction: steeringAngle > 46 ? 'R' : steeringAngle < 44 ? 'L' : 'C',
-      angle: steeringAngle.toFixed(0),
+      angle: steeringAngle,
     },
     throttle: {
       direction: throttleDirection,
-      magnitude: throttleMagnitude.toFixed(0),
+      magnitude: throttleMagnitude,
     },
   });
 });

@@ -46,8 +46,8 @@ screen.render();
 setInterval(() => screen.render(), 1e3);
 
 function render({ steering, throttle }) {
-  steeringDisplay.setContent(`Steering: ${steering.direction} ${steering.angle}° => {servo raw value}`);
-  throttleDisplay.setContent(`Throttle: ${throttle.direction} ${throttle.magnitude} => {PWM value}`);
+  steeringDisplay.setContent(`Steering: ${steering.direction} ${Math.round(steering.angle)}° => {servo raw value}`);
+  throttleDisplay.setContent(`Throttle: ${throttle.direction} ${Math.round(throttle.magnitude)} => {PWM value}`);
   screen.render();
 }
 
