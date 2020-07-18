@@ -4,6 +4,8 @@ const inputDevice = require('./input-device');
 
 const inputRepresentationEmitter = new EventEmitter();
 
+inputDevice.on('error', (error) => inputRepresentationEmitter.emit('error', error));
+
 const rawValues = {
   rightX: {
     value: 0,

@@ -1,21 +1,6 @@
 const EvdevReader = require('evdev');
 
 const inputDevice = new EvdevReader();
-/*
-[
-  // "EV_SYN",
-  "EV_KEY",
-  "EV_REL",
-  "EV_ABS",
-  // "EV_MSC",
-].forEach(type => inputDevice.on(type, ({ code, value, time }) => console.log({ type, code, value })));
-*/
-
-inputDevice.on('error', (err) => {
-  console.error(err);
-  process.exitCode = 1;
-  throw err;
-});
 
 inputDevice.open('/dev/input/event0', (err, fd) => {
   if (err) {
