@@ -67,7 +67,7 @@ inputDevice.once('ready', (device) => {
   if (device.supportedEvents.EV_ABS.ABS_Z) {
     Object.assign(rawValues.leftZ, device.supportedEvents.EV_ABS.ABS_Z);
   }
-  dasboard(calculateInputState());
+  dashboard(calculateInputState());
 });
 
 inputDevice.on('EV_ABS', ({ code, value }) => {
@@ -81,5 +81,5 @@ inputDevice.on('EV_ABS', ({ code, value }) => {
     return;
   }
 
-  dasboard(calculateInputState());
+  dashboard(calculateInputState());
 });
