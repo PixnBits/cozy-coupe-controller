@@ -1,6 +1,6 @@
 const { EventEmitter } = require('events');
 
-const inputDevice = require('./src/input-device');
+const inputDevice = require('./input-device');
 
 const inputRepresentationEmitter = new EventEmitter();
 
