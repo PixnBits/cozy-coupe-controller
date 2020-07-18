@@ -1,0 +1,80 @@
+const dashboard = require('./src/dashboard');
+const inputDevice = require('./src/input-device');
+
+const rawValues = {
+  rightX: {
+    value: 0,
+    min: 0,
+    max: 0,
+  },
+  leftZ: {
+    value: 0,
+    min: 0,
+    max: 0,
+  },
+  rightZ: {
+    value: 0,
+    min: 0,
+    max: 0,
+  },
+};
+
+function mapValueToRange(rawValue, outputMin, outputMax) {
+  // FIXME: handle dead zones
+  const { max: inputMax, min: inputMin, value: inputValue } = rawValue;
+  return ((inputValue - inputMin) / (inputMax - inputMin) * (outputMax - outputMin)) + outputMin;
+}
+
+inputDevice.once('ready', (device) => {
+  console.log(`reading from ${device.name}`);
+  if (device.supportedEvents.EV_ABS.ABS_RX) {
+    Object.assign(rawValues.rightX, device.supportedEvents.EV_ABS.ABS_RX);
+  }
+  if (device.supportedEvents.EV_ABS.ABS_RZ) {
+    Object.assign(rawValues.rightZ, device.supportedEvents.EV_ABS.ABS_RZ);
+  }
+  if (device.supportedEvents.EV_ABS.ABS_Z) {
+    Object.assign(rawValues.leftZ, device.supportedEvents.EV_ABS.ABS_Z);
+  }
+  console.log('rawValues', rawValues);
+});
+
+inputDevice.on('EV_KEY', ({ code, value }) => {
+  if (code === 'ABS_RX') {
+    rawValues.rightX.value = value;
+  } else if (code === 'ABS_Z') {
+    rawValues.leftZ.value = value;
+  } else if (code === 'ABS_RZ') {
+    rawValues.rightZ.value = value;
+  } else {
+    return;
+  }
+
+  const steeringAngle = mapValueToRange(rawValues.rightX, 0, 90);
+  const throttleForwardMagnitude = mapValueToRange(rawValues.rightZ, 0, 100);
+  const throttleBackwardsMagnitude = mapValueToRange(rawValues.leftZ, 0, 100);
+
+  let throttleMagnitude = 0;
+  let throttleDirection = 'S';
+  if (throttleForwardMagnitude > 1 && throttleBackwardsMagnitude > 1) {
+    throttleDirection = 'S';
+    throttleMagnitude = 0;
+  } else if (throttleForwardMagnitude > 1) {
+    throttleDirection = 'F';
+    throttleMagnitude = throttleForwardMagnitude;
+  } else {
+    throttleDirection = 'R';
+    throttleMagnitude = throttleBackwardsMagnitude;
+  }
+
+  dashboard({
+    steering: {
+      direction: steeringAngle > 46 ? 'R' : steeringAngle < 44 ? 'L' : 'C',
+      angle: steeringAngle.toFixed(0),
+    },
+    throttle: {
+      direction: throttleDirection,
+      magnitude: throttleMagnitude.toFixed(0),
+    },
+  });
+});
