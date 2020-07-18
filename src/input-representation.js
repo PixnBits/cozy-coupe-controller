@@ -1,10 +1,8 @@
 const { EventEmitter } = require('events');
 
-const inputDevice = require('./input-device');
+const createReader = require('./input-device');
 
 const inputRepresentationEmitter = new EventEmitter();
-
-inputDevice.on('error', (error) => inputRepresentationEmitter.emit('error', error));
 
 const rawValues = {
   rightX: {
@@ -59,6 +57,10 @@ function calculateInputRepresentation() {
     },
   };
 }
+
+const inputDevice = createReader();
+
+inputDevice.on('error', (error) => inputRepresentationEmitter.emit('error', error));
 
 inputDevice.once('ready', (device) => {
   inputRepresentationEmitter.emit('device', device);
