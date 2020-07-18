@@ -12,8 +12,11 @@
     "jest": "^26.1.0"
   },
   "dependencies": {
+    "blessed": "^0.1.81",
     "evdev": "~0.2.5",
-    "johnny-five": "^2.0.0",
+    "johnny-five": "^2.0.0"
+  },
+  "optionalDependencies": {
     "raspi-io": "^11.0.0"
   }
 }
