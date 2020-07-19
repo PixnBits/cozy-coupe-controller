@@ -1,9 +1,11 @@
 const EvdevReader = require('evdev');
 
+const DEVICE_PATH = '/dev/input/event0';
+
 function createReader() {
   const inputDevice = new EvdevReader();
 
-  inputDevice.open('/dev/input/event0', (err, fd) => {
+  inputDevice.open(DEVICE_PATH, (err, fd) => {
     if (err) {
       inputDevice.emit('error', err);
       return;
