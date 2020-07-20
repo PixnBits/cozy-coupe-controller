@@ -1,4 +1,4 @@
-const dashboard = require('./src/dashboard');
+// const dashboard = require('./src/dashboard');
 const inputRepresentationEmitter = require('./src/input-representation');
 const { addReadyListener, updateOutput } = require('./src/output');
 
@@ -28,5 +28,6 @@ inputRepresentationEmitter.on('representation', (inputRepresentation) => {
     updateOutput(inputRepresentation);
   }
 
-  dashboard(inputRepresentation);
+  // dashboard(inputRepresentation);
+  console.log(enableOutput, inputRepresentation);
 });
