@@ -21,8 +21,8 @@ function setSteeringAngle(degrees) {
     throw new Error('steeringServo not ready yet');
   }
 
-  // -45 as the direction is inverted
-  steeringServo.to(-45 + degrees);
+  // the direction is inverted
+  steeringServo.to(45 - degrees);
 }
 
 function updateOutput({ steering, throttle }) {
