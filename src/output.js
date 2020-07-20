@@ -1,6 +1,9 @@
 const {Board, Servo} = require("johnny-five");
 const Raspi = require("raspi-io").RaspiIO;
-const board = new Board({ io: new Raspi() });
+const board = new Board({
+  io: new Raspi(),
+  repl: false,
+});
 
 let readyListeners = [];
 let steeringServo;
