@@ -75,7 +75,7 @@ board.on('ready', () => {
   throttleEnableRelay.open();
   board.on('exit', () => { throttleEnableRelay.open(); });
 
-  const throttleDirectionRelay = new Pin('P1-13');
+  const throttleDirectionRelay = new Relay('P1-13');
   throttleDirectionRelay.open();
   board.on('exit', () => { throttleDirectionRelay.open(); });
 
