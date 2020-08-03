@@ -1,5 +1,5 @@
-const {Board, Servo} = require("johnny-five");
-const Raspi = require("raspi-io").RaspiIO;
+const { Board, Servo, Relay } = require('johnny-five');
+const Raspi = require('raspi-io').RaspiIO;
 const board = new Board({
   io: new Raspi(),
   repl: false,
@@ -7,6 +7,8 @@ const board = new Board({
 
 let readyListeners = [];
 let steeringServo;
+let throttleEnableRelay;
+let throttleDirectionRelay;
 
 function addReadyListener(cb) {
   readyListeners.push(cb);
@@ -25,20 +27,57 @@ function setSteeringAngle(degrees) {
   steeringServo.to(45 - degrees);
 }
 
+// S, F, R
+function setThrottleDirection(direction) {
+  // TODO: memoize
+  if (!throttleDirectionRelay || !throttleEnableRelay) {
+    throw new Error('throttleDirectionRelay not ready yet');
+  }
+
+  if (direction === 'S') {
+    throttleEnableRelay.open();
+    return;
+  }
+
+  if (direction === 'F') {
+    throttleEnableRelay.close();
+    throttleDirectionRelay.open();
+    return;
+  }
+
+  if (direction === 'R') {
+    throttleEnableRelay.close();
+    throttleDirectionRelay.close();
+    return;
+  }
+
+  throw new Error(`direction must be S(topped), F(orward), or R(everse), was "${direction}"`);
+}
+
 function updateOutput({ steering, throttle }) {
   setSteeringAngle(steering.angle);
-  // setThrottleDirection(throttle.direction)
+  setThrottleDirection(throttle.direction);
   // setThrottleSpeed(throttle.magnitude)
 }
 
-board.on("ready", () => {
+board.on('ready', () => {
   steeringServo = new Servo({
     controller: 'PCA9685',
     address: 0x40,
     pin: 1,
   });
   steeringServo.stop();
-  board.on("exit", () => { steeringServo.stop(); });
+  board.on('exit', () => { steeringServo.stop(); });
+
+  // using a board that breaks out both Normally Open (NO) & Closed (NC) connections
+  // using the NO to default to a disconnected state for safety
+  const throttleEnableRelay = new Relay('P1-11');
+  throttleEnableRelay.open();
+  board.on('exit', () => { throttleEnableRelay.open(); });
+
+  const throttleDirectionRelay = new Pin('P1-13');
+  throttleDirectionRelay.open();
+  board.on('exit', () => { throttleDirectionRelay.open(); });
 
   readyListeners.forEach(cb => setImmediate(cb, null));
   delete readyListeners;
