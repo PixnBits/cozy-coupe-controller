@@ -69,13 +69,18 @@ board.on('ready', () => {
   steeringServo.stop();
   board.on('exit', () => { steeringServo.stop(); });
 
-  // using a board that breaks out both Normally Open (NO) & Closed (NC) connections
-  // using the NO to default to a disconnected state for safety
-  const throttleEnableRelay = new Relay('P1-11');
+  // using a relay board that breaks out both Normally Open (NO) & Closed (NC) connections
+  // raspi-io starts pins on low, and the relays are triggered high, so disconnected by default
+  // this is intentinal for safety
+  // using channel 2 for throttleEnableRelay
+  const throttleEnableRelay = new Relay('GPIO20');
   throttleEnableRelay.open();
   board.on('exit', () => { throttleEnableRelay.open(); });
 
-  const throttleDirectionRelay = new Relay('P1-13');
+  // using channel 3 for throttleDirectionRelay
+  // throttleEnableRelay/CH2 normally open (NO2) connects to throttleDirectionRelay common (C1)
+  // intended to use normally closed (NC1) for forward, normally open (NO1) for reverse
+  const throttleDirectionRelay = new Relay('GPIO26');
   throttleDirectionRelay.open();
   board.on('exit', () => { throttleDirectionRelay.open(); });
 
