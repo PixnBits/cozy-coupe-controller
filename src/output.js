@@ -73,14 +73,14 @@ board.on('ready', () => {
   // raspi-io starts pins on low, and the relays are triggered high, so disconnected by default
   // this is intentinal for safety
   // using channel 2 for throttleEnableRelay
-  const throttleEnableRelay = new Relay('GPIO20');
+  throttleEnableRelay = new Relay('GPIO20');
   throttleEnableRelay.open();
   board.on('exit', () => { throttleEnableRelay.open(); });
 
   // using channel 3 for throttleDirectionRelay
   // throttleEnableRelay/CH2 normally open (NO2) connects to throttleDirectionRelay common (C1)
   // intended to use normally closed (NC1) for forward, normally open (NO1) for reverse
-  const throttleDirectionRelay = new Relay('GPIO26');
+  throttleDirectionRelay = new Relay('GPIO26');
   throttleDirectionRelay.open();
   board.on('exit', () => { throttleDirectionRelay.open(); });
 
