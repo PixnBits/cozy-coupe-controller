@@ -7,6 +7,7 @@ const board = new Board({
 
 let readyListeners = [];
 let steeringServo;
+let throttleServo;
 let throttleEnableRelay;
 let throttleDirectionRelay;
 
@@ -54,10 +55,15 @@ function setThrottleDirection(direction) {
   throw new Error(`direction must be S(topped), F(orward), or R(everse), was "${direction}"`);
 }
 
+function setThrottleSpeed(magnitude) {
+  console.log(`setThrottleSpeed, magnitude ${magnitude}`);
+  // throttleServo.to(0);
+}
+
 function updateOutput({ steering, throttle }) {
   setSteeringAngle(steering.angle);
   setThrottleDirection(throttle.direction);
-  // setThrottleSpeed(throttle.magnitude)
+  setThrottleSpeed(throttle.magnitude)
 }
 
 board.on('ready', () => {
@@ -68,6 +74,15 @@ board.on('ready', () => {
   });
   steeringServo.stop();
   board.on('exit', () => { steeringServo.stop(); });
+
+  throttleServo = new Servo({
+    controller: 'PCA9685',
+    address: 0x40,
+    pin: 3,
+  });
+  throttleServo.stop();
+  board.on('exit', () => { throttleServo.stop(); });
+  throttleServo.to(0);
 
   // using a relay board that breaks out both Normally Open (NO) & Closed (NC) connections
   // raspi-io starts pins on low, and the relays are triggered high, so disconnected by default
