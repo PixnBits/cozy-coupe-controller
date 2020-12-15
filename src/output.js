@@ -67,22 +67,7 @@ function updateOutput({ steering, throttle }) {
 }
 
 board.on('ready', () => {
-  steeringServo = new Servo({
-    controller: 'PCA9685',
-    address: 0x40,
-    pin: 1,
-  });
-  steeringServo.stop();
-  board.on('exit', () => { steeringServo.stop(); });
-
-  throttleServo = new Servo({
-    controller: 'PCA9685',
-    address: 0x40,
-    pin: 3,
-  });
-  throttleServo.stop();
-  board.on('exit', () => { throttleServo.stop(); });
-  throttleServo.to(0);
+  // first: ensure we disable movement
 
   // using a relay board that breaks out both Normally Open (NO) & Closed (NC) connections
   // raspi-io starts pins on low, and the relays are triggered high, so disconnected by default
@@ -92,12 +77,31 @@ board.on('ready', () => {
   throttleEnableRelay.open();
   board.on('exit', () => { throttleEnableRelay.open(); });
 
+  // _now_ we can initialize direction, speed, etc.
+
   // using channel 3 for throttleDirectionRelay
   // throttleEnableRelay/CH2 normally open (NO2) connects to throttleDirectionRelay common (C1)
   // intended to use normally closed (NC1) for forward, normally open (NO1) for reverse
   throttleDirectionRelay = new Relay('GPIO26');
   throttleDirectionRelay.open();
   board.on('exit', () => { throttleDirectionRelay.open(); });
+
+  throttleServo = new Servo({
+    controller: 'PCA9685',
+    address: 0x40,
+    pin: 0,
+  });
+  throttleServo.stop();
+  board.on('exit', () => { throttleServo.stop(); });
+  throttleServo.to(0);
+
+  steeringServo = new Servo({
+    controller: 'PCA9685',
+    address: 0x40,
+    pin: 3,
+  });
+  steeringServo.stop();
+  board.on('exit', () => { steeringServo.stop(); });
 
   readyListeners.forEach(cb => setImmediate(cb, null));
   delete readyListeners;
