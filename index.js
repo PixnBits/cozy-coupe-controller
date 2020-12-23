@@ -6,8 +6,6 @@ let enableOutput = false;
 
 inputRepresentationEmitter.on('error', (err) => {
   console.error('input device error', err);
-  process.exitCode = 2;
-  throw err;
 });
 
 addReadyListener((err) => {
