@@ -4,10 +4,6 @@ const { addReadyListener, updateOutput } = require('./src/output');
 
 let enableOutput = false;
 
-inputRepresentationEmitter.on('error', (err) => {
-  console.error('input device error', err);
-});
-
 addReadyListener((err) => {
   if (err) {
     console.error('output device error', err);
@@ -15,6 +11,23 @@ addReadyListener((err) => {
     throw err;
   }
   enableOutput = true;
+});
+
+inputRepresentationEmitter.on('error', (err) => {
+  console.error('input device error', err);
+  // TODO: differentiate between input disconnect errors and others
+  // only device disconnect (out of range?) errors seen so far
+  // reset the output to avoid zombie/sleepwalking based on the last known position
+  enableOutput = false;
+  updateOutput({
+    steering: {
+      angle: 0,
+    },
+    throttle: {
+      direction: 'S',
+      magnitude: 0,
+    },
+  })
 });
 
 inputRepresentationEmitter.once('device', ({ name }) => {
@@ -27,5 +40,5 @@ inputRepresentationEmitter.on('representation', (inputRepresentation) => {
   }
 
   // dashboard(inputRepresentation);
-  console.log(enableOutput, inputRepresentation);
+  // console.log(enableOutput, inputRepresentation);
 });
