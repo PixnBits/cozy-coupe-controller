@@ -57,9 +57,9 @@ function setThrottleDirection(direction) {
 
 function setThrottleSpeed(magnitude) {
   // magnitude is 0-100 (note: not a percentage like 0-1)
-  // servo expects degrees (0-270), map
+  // servo expects degrees (0-180), map
   // johnny5 takes care of bounds
-  throttleServo.to(270 * magnitude / 100);
+  throttleServo.to(180 * magnitude / 100);
 }
 
 function updateOutput({ steering, throttle }) {
@@ -92,7 +92,7 @@ board.on('ready', () => {
     controller: 'PCA9685',
     address: 0x40,
     pin: 0,
-    range: [0, 270],
+    range: [0, 180],
     startAt: 0,
   });
   throttleServo.stop();
