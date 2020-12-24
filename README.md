@@ -8,16 +8,11 @@ Motor speed controller and servo, Raspberry Pi, Xbox controller.
 
 ## Service
 
-Ensure the `pi` user has GPIO access by adding it to the `gpio` group:
-```bash
-$ sudo adduser pi gpio
-```
-
 Set up the systemd service:
 ```bash
-$ sudo ln -s ./cozy-skateboard.service /lib/systemd/system/cozy-skateboard.service
+$ sudo ln -s /home/pi/cozy-skateboard/cozy-skateboard.service /lib/systemd/system/cozy-skateboard.service
 $ sudo systemctl daemon-reload
-$ sudo systemtl enable cozy-skateboard
+$ sudo systemctl enable cozy-skateboard
 $ sudo systemctl start cozy-skateboard
 ```
 

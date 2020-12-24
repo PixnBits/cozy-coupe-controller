@@ -6,8 +6,8 @@ Requires=bluetooth.target
 
 [Service]
 Type=simple
-User=pi
-ExecStart=/usr/bin/node /home/pi/cozy-skateboard/index.js
+User=root
+ExecStart=/home/pi/.nvm/versions/node/v8.17.0/bin/node /home/pi/cozy-skateboard/index.js
 Restart=on-failure
 
 [Install]
