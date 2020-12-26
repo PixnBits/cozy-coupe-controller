@@ -1,0 +1,14 @@
+[Unit]
+Description=Silly RC skateboard for a Cozy Coupe.
+Documentation=https://github.com/pixnbits/cozy-skateboard
+After=bluetooth.target
+Requires=bluetooth.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/home/pi/.nvm/versions/node/v8.17.0/bin/node /home/pi/cozy-skateboard/index.js
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
