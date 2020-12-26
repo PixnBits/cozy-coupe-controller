@@ -63,7 +63,7 @@ function setUpInputDevice() {
   try {
     inputDevice = createReader();
   } catch (createReaderError) {
-    console.error(createReaderError);
+    inputRepresentationEmitter.emit('error', createReaderError);
     // likely no device found, try again in a bit
     setTimeout(setUpInputDevice, 1e3);
     return;
