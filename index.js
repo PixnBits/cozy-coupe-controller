@@ -1,4 +1,3 @@
-// const dashboard = require('./src/dashboard');
 const inputRepresentationEmitter = require('./src/input-representation');
 const { addReadyListener, updateOutput } = require('./src/output');
 
