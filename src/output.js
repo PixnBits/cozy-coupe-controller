@@ -1,5 +1,6 @@
 const { Board, Servo, Relay } = require('johnny-five');
 const Raspi = require('raspi-io').RaspiIO;
+
 const board = new Board({
   io: new Raspi(),
   repl: false,
@@ -59,13 +60,13 @@ function setThrottleSpeed(magnitude) {
   // magnitude is 0-100 (note: not a percentage like 0-1)
   // servo expects degrees (0-180), map
   // johnny5 takes care of bounds
-  throttleServo.to(180 * magnitude / 100);
+  throttleServo.to((180 * magnitude) / 100);
 }
 
 function updateOutput({ steering, throttle }) {
   setSteeringAngle(steering.angle);
   setThrottleDirection(throttle.direction);
-  setThrottleSpeed(throttle.magnitude)
+  setThrottleSpeed(throttle.magnitude);
 }
 
 board.on('ready', () => {
@@ -106,13 +107,13 @@ board.on('ready', () => {
   steeringServo.stop();
   board.on('exit', () => { steeringServo.stop(); });
 
-  readyListeners.forEach(cb => setImmediate(cb, null));
-  delete readyListeners;
+  readyListeners.forEach((cb) => setImmediate(cb, null));
+  readyListeners = null;
 });
 
 board.on('error', (err) => {
-  readyListeners.forEach(cb => setImmediate(cb, err));
-  delete readyListeners;
+  readyListeners.forEach((cb) => setImmediate(cb, err));
+  readyListeners = null;
 });
 
 module.exports = {
