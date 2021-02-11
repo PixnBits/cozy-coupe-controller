@@ -33,7 +33,7 @@ The motor controller's direction button has a black wire, connect this to the e-
 
 ## Software
 
-Install Node.js 8.x. Consider using [`nvm`](https://github.com/nvm-sh/nvm) to make updating easy.
+Install Node.js 12.x. Consider using [`nvm`](https://github.com/nvm-sh/nvm) to make updating easy.
 
 ### Pair an Xbox One Controller
 
