@@ -7,8 +7,10 @@ function readDeviceCapabilities(devicePath, cb) {
   // this data came from `$ evtest /dev/input/event0`
   setTimeout(cb, 0, null, {
     driverVersion: '1.0.1',
-    id: { bus: 0x5, vendor: 0x45e, product: 0x2e0, version: 0x903 },
-    name: "Xbox Wireless Controller",
+    id: {
+      bus: 0x5, vendor: 0x45E, product: 0x2E0, version: 0x903,
+    },
+    name: 'Xbox Wireless Controller',
     supportedEvents: {
       EV_SYN: true,
       EV_KEY: [
@@ -79,7 +81,7 @@ function readDeviceCapabilities(devicePath, cb) {
         },
       },
       EV_MSC: [
-        'MSC_SCAN'
+        'MSC_SCAN',
       ],
       EV_FF: [
         'FF_RUMBLE',
@@ -96,12 +98,13 @@ function readDeviceCapabilities(devicePath, cb) {
 function createReader() {
   const inputDevice = new EvdevReader();
 
-  inputDevice.open(DEVICE_PATH, (readerError, fd) => {
+  inputDevice.open(DEVICE_PATH, (readerError /* , fd */) => {
     if (readerError) {
       inputDevice.emit('error', readerError);
       return;
     }
 
+    // TODO: should fd be used instead?
     readDeviceCapabilities(DEVICE_PATH, (capabilitiesError, deviceCapabilities) => {
       if (capabilitiesError) {
         inputDevice.emit('error', capabilitiesError);

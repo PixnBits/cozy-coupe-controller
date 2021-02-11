@@ -25,7 +25,7 @@ const rawValues = {
 function mapValueToRange(rawValue, outputMin, outputMax) {
   // FIXME: handle dead zones
   const { max: inputMax, min: inputMin, value: inputValue } = rawValue;
-  return ((inputValue - inputMin) / (inputMax - inputMin) * (outputMax - outputMin)) + outputMin;
+  return (((inputValue - inputMin) / (inputMax - inputMin)) * (outputMax - outputMin)) + outputMin;
 }
 
 function calculateInputRepresentation() {
@@ -46,9 +46,16 @@ function calculateInputRepresentation() {
     throttleMagnitude = throttleBackwardsMagnitude;
   }
 
+  let steeringDirection = 'C';
+  if (steeringAngle > 2) {
+    steeringDirection = 'R';
+  } else if (steeringAngle < -2) {
+    steeringDirection = 'L';
+  }
+
   return {
     steering: {
-      direction: steeringAngle > 2 ? 'R' : steeringAngle < -2 ? 'L' : 'C',
+      direction: steeringDirection,
       angle: steeringAngle,
     },
     throttle: {
