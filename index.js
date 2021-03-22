@@ -18,6 +18,9 @@ inputRepresentationEmitter
         direction: 'S',
         magnitude: 0,
       },
+      accessories: {
+        frontLightBar: false,
+      },
     });
   });
 

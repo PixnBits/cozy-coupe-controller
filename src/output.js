@@ -11,6 +11,8 @@ let steeringServo;
 let throttleServo;
 let throttleEnableRelay;
 let throttleDirectionRelay;
+// accessories
+let binaryLightBarRelay;
 
 function addReadyListener(cb) {
   readyListeners.push(cb);
@@ -63,10 +65,20 @@ function setThrottleSpeed(magnitude) {
   throttleServo.to((180 * magnitude) / 100);
 }
 
-function updateOutput({ steering, throttle }) {
+function setAccessories({ frontLightBar = false }) {
+  if (frontLightBar) {
+    binaryLightBarRelay.close();
+  } else {
+    binaryLightBarRelay.open();
+  }
+}
+
+function updateOutput({ steering, throttle, accessories }) {
   setSteeringAngle(steering.angle);
   setThrottleDirection(throttle.direction);
   setThrottleSpeed(throttle.magnitude);
+
+  setAccessories(accessories);
 }
 
 board.on('ready', () => {
@@ -88,6 +100,11 @@ board.on('ready', () => {
   throttleDirectionRelay = new Relay('GPIO26');
   throttleDirectionRelay.open();
   board.on('exit', () => { throttleDirectionRelay.open(); });
+
+  // non-dimmable light bar
+  binaryLightBarRelay = new Relay('GPIO21');
+  binaryLightBarRelay.open();
+  board.on('exit', () => { binaryLightBarRelay.open(); });
 
   throttleServo = new Servo({
     controller: 'PCA9685',

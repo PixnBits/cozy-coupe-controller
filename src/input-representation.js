@@ -20,6 +20,11 @@ const rawValues = {
     min: 0,
     max: 0,
   },
+  y: 0,
+};
+
+const derivedStates = {
+  yToggle: false,
 };
 
 function mapValueToRange(rawValue, outputMin, outputMax) {
@@ -61,6 +66,9 @@ function calculateInputRepresentation() {
     throttle: {
       direction: throttleDirection,
       magnitude: throttleMagnitude,
+    },
+    accessories: {
+      frontLightBar: derivedStates.yToggle,
     },
   };
 }
@@ -106,6 +114,24 @@ function setUpInputDevice() {
       rawValues.leftZ.value = value;
     } else if (code === 'ABS_RZ') {
       rawValues.rightZ.value = value;
+    } else {
+      return;
+    }
+
+    inputRepresentationEmitter.emit('representation', calculateInputRepresentation());
+  });
+
+  inputDevice.on('EV_KEY', ({ code, value }) => {
+    if (code === 'BTN_Y') {
+      // TODO: emit computed key up and key down events via event emitter
+      // first make checks based off of the previous state
+      if (value === 0 && rawValues.y === 1) {
+        // was down, now it's up
+        derivedStates.yToggle = !derivedStates.yToggle;
+      }
+
+      // then set the new/next/current state
+      rawValues.y = value;
     } else {
       return;
     }
