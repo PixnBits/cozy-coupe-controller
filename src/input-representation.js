@@ -73,6 +73,10 @@ function calculateInputRepresentation() {
   };
 }
 
+function emitInputRepresentation() {
+  inputRepresentationEmitter.emit('representation', calculateInputRepresentation());
+}
+
 function setUpInputDevice() {
   let inputDevice;
   try {
@@ -104,7 +108,7 @@ function setUpInputDevice() {
       Object.assign(rawValues.leftZ, device.supportedEvents.EV_ABS.ABS_Z);
     }
 
-    inputRepresentationEmitter.emit('representation', calculateInputRepresentation());
+    emitInputRepresentation();
   });
 
   inputDevice.on('EV_ABS', ({ code, value }) => {
@@ -118,27 +122,27 @@ function setUpInputDevice() {
       return;
     }
 
-    inputRepresentationEmitter.emit('representation', calculateInputRepresentation());
+    emitInputRepresentation();
   });
 
   inputDevice.on('EV_KEY', ({ code, value }) => {
-    if (code === 'BTN_Y') {
-      // TODO: emit computed key up and key down events via event emitter
-      // first make checks based off of the previous state
-      if (value === 0 && rawValues.y === 1) {
-        // was down, now it's up
-        derivedStates.yToggle = !derivedStates.yToggle;
-      }
+    const buttonName = code.replace(/^BTN_/, '').toLowerCase();
+    const previousValueState = rawValues[buttonName];
+    rawValues[buttonName] = value;
 
-      // then set the new/next/current state
-      rawValues.y = value;
-    } else {
-      return;
+    // down or up?
+    if (value === 1 && previousValueState === 0 || previousValueState === undefined) {
+      inputRepresentationEmitter.emit(`keyDown:${buttonName}`);
+    } else if (value === 0 && previousValueState === 1 || previousValueState === undefined) {
+      inputRepresentationEmitter.emit(`keyUp:${buttonName}`);
     }
-
-    inputRepresentationEmitter.emit('representation', calculateInputRepresentation());
   });
 }
+
+inputRepresentationEmitter.on('keyDown:y', () => {
+  derivedStates.yToggle = !derivedStates.yToggle;
+  emitInputRepresentation();
+});
 
 setUpInputDevice();
 module.exports = inputRepresentationEmitter;

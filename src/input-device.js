@@ -117,6 +117,11 @@ function createReader() {
 
   // TODO: need to de-register this callback when the inputDevice closes/has an error?
   process.once('exit', () => inputDevice.close());
+  // FIXME: work around pigpio's signal "stealing"
+  // https://github.com/fivdi/pigpio/issues/6#issuecomment-224058777
+  // https://github.com/fivdi/pigpio/blob/master/doc/configuration.md#initialize
+  process.once('SIGTERM', () => inputDevice.close());
+  process.once('SIGINT', () => inputDevice.close());
 
   return inputDevice;
 }

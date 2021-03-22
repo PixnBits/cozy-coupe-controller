@@ -1,5 +1,6 @@
 const inputRepresentationEmitter = require('./src/input-representation');
 const { addReadyListener, updateOutput } = require('./src/output');
+const { queueShutdown, cancelShutdown } = require('./src/system');
 
 inputRepresentationEmitter
   .on('device', ({ name }) => {
@@ -22,7 +23,9 @@ inputRepresentationEmitter
         frontLightBar: false,
       },
     });
-  });
+  })
+  .on('keyDown:start', queueShutdown)
+  .on('keyUp:start', cancelShutdown);
 
 addReadyListener((err) => {
   if (err) {
