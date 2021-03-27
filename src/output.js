@@ -19,6 +19,10 @@ function addReadyListener(cb) {
 }
 
 function setSteeringAngle(degrees) {
+  if (degrees !== 0 && !degrees) {
+    return;
+  }
+
   if (degrees < -45 || degrees > 45) {
     throw new Error(`requested steering angle ${degrees} outside bounds of -45 to +45`);
   }
@@ -33,6 +37,10 @@ function setSteeringAngle(degrees) {
 
 // S, F, R
 function setThrottleDirection(direction) {
+  if (!direction) {
+    return;
+  }
+
   // TODO: memoize
   if (!throttleDirectionRelay || !throttleEnableRelay) {
     throw new Error('throttleDirectionRelay not ready yet');
@@ -59,26 +67,51 @@ function setThrottleDirection(direction) {
 }
 
 function setThrottleSpeed(magnitude) {
+  if (magnitude !== 0 && !magnitude) {
+    return;
+  }
   // magnitude is 0-100 (note: not a percentage like 0-1)
   // servo expects degrees (0-180), map
   // johnny5 takes care of bounds
   throttleServo.to((180 * magnitude) / 100);
 }
 
-function setAccessories({ frontLightBar = false }) {
-  if (frontLightBar) {
+function setAccessories({ frontLightBar }) {
+  if (frontLightBar === true) {
     binaryLightBarRelay.close();
-  } else {
+  } else if (frontLightBar === false) {
     binaryLightBarRelay.open();
   }
 }
 
 function updateOutput({ steering, throttle, accessories }) {
-  setSteeringAngle(steering.angle);
-  setThrottleDirection(throttle.direction);
-  setThrottleSpeed(throttle.magnitude);
+  if (steering) {
+    setSteeringAngle(steering.angle);
+  }
 
-  setAccessories(accessories);
+  if (throttle) {
+    setThrottleDirection(throttle.direction);
+    setThrottleSpeed(throttle.magnitude);
+  }
+
+  if (accessories) {
+    setAccessories(accessories);
+  }
+}
+
+function resetOutput() {
+  updateOutput({
+    steering: {
+      angle: 0,
+    },
+    throttle: {
+      direction: 'S',
+      magnitude: 0,
+    },
+    accessories: {
+      frontLightBar: false,
+    },
+  });
 }
 
 board.on('ready', () => {
@@ -136,4 +169,5 @@ board.on('error', (err) => {
 module.exports = {
   addReadyListener,
   updateOutput,
+  resetOutput,
 };
