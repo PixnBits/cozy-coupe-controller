@@ -9,7 +9,7 @@ function initiateShutdownNow() {
       console.error(`shutdown command had an error (exit code ${code})`);
       return;
     }
-    console.log(`shutdown initiated`);
+    console.log('shutdown initiated');
   });
 }
 

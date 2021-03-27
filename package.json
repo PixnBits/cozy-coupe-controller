@@ -6,13 +6,15 @@
   "scripts": {
     "test:unit": "jest",
     "test:lint": "eslint --ext js,md,snap .",
-    "test": "npm run test:lint && npm run test:unit"
+    "test": "npm run test:lint && npm run test:unit",
+    "githook:pre-commit": "npm run test:lint"
   },
   "author": "pixnbits",
   "license": "ISC",
   "devDependencies": {
     "eslint": "^7.16.0",
     "eslint-config-amex": "^13.1.0",
+    "githook-scripts": "^1.1.0",
     "jest": "^26.1.0"
   },
   "dependencies": {

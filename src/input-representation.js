@@ -131,9 +131,9 @@ function setUpInputDevice() {
     rawValues[buttonName] = value;
 
     // down or up?
-    if (value === 1 && previousValueState === 0 || previousValueState === undefined) {
+    if (value === 1 && (previousValueState === 0 || previousValueState === undefined)) {
       inputRepresentationEmitter.emit(`keyDown:${buttonName}`);
-    } else if (value === 0 && previousValueState === 1 || previousValueState === undefined) {
+    } else if (value === 0 && (previousValueState === 1 || previousValueState === undefined)) {
       inputRepresentationEmitter.emit(`keyUp:${buttonName}`);
     }
   });
